@@ -31,6 +31,10 @@ impl Location {
        self.tipe = LocationType::Tree;
     }
 
+    pub fn is_well(&mut self) {
+       self.tipe = LocationType::Well;
+    }
+
     pub fn next_to(&mut self, other: &Location) -> bool {
         let mut changed = false;
 	if self.tipe == LocationType::Empty {
@@ -92,9 +96,10 @@ fn find_best_location(houses: Vec<(usize, usize)>, trees: Vec<(usize, usize)>, g
     for (i, j) in trees {
 	grid[i][j].is_tree();
     }
+    println!("Starting Grid:");
+    print_grid(&grid);
     while !check.is_empty() {
         let old_check = check.clone();
-	println!("check = {:?}", check);
 	check.clear();
         for (i, j) in old_check {
 	    let other = grid[i][j].clone();
@@ -135,13 +140,13 @@ fn find_best_location(houses: Vec<(usize, usize)>, trees: Vec<(usize, usize)>, g
 		    match loc.total_distance() {
 		        Ok(total) => {
 		            if total < min_distance {
-		                println!("({}, {}) = {:?}", x, y, loc);
+		                // println!("({}, {}) = {:?}", x, y, loc);
 		                min_distance = total;
 			        min_location = (x, y);
 		            }
 		        },
 			Err(()) => {
-		                println!("({}, {}) = Unreachable ({:?})", x, y, loc);
+		            // println!("({}, {}) = Unreachable ({:?})", x, y, loc);
 			},
 		    }
 		},
@@ -151,6 +156,8 @@ fn find_best_location(houses: Vec<(usize, usize)>, trees: Vec<(usize, usize)>, g
 	}
 	x += 1;
     }
+    grid[min_location.0][min_location.1].is_well();
+    println!("Final Grid:");
     print_grid(&grid);
     min_location
 }
